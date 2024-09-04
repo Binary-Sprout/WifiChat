@@ -10,7 +10,8 @@ No Internet Required: Operates completely offline, making it ideal for local com
 Basic Low L evel Admin control: 
 You can now block or unblock devices based on their IP addresses.
 
-Setup Instructions:
+##Setup Instructions
+
 Install Required Libraries:
 
 Ensure you have the latest ESP32 board package installed in the Arduino IDE.
