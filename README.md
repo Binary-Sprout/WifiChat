@@ -52,6 +52,6 @@ Blocked devices will see a warning message if they attempt to send messages.
 You can manage blocked IPs through the "Blocked IPs" section on the devices page.
 
 ## Security Note
-
+[!WARNING]
 This application does not use encryption, so avoid sending sensitive or personal information.
 This setup allows for a simple local chat application that operates entirely within the created WiFi network, making it a great project for learning basic web server functionality and network communication using ESP32.
