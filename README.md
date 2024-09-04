@@ -35,12 +35,14 @@ Connect your computer, smartphone, or tablet to this WiFi network. No password i
 ### Access the Chat Interface
 
 Open a web browser (e.g., Chrome, Firefox) on your connected device.
-Navigate to the IP address 192.168.4.1 OR http://anything.This is the default IP address for the ESP32 in AP mode.
+Navigate to the IP address 192.168.4.1 OR http://anything. This is the default IP address for the ESP32 in AP mode.
 You will see the chat interface where you can enter your name and message to participate in the chat.
 
 ## Using the Chat Interface
 
-Sending Messages: Enter your name and message in the form and click "Send." Messages will be displayed in the chat area.
+### Sending Messages
+
+Enter your name and message in the form and click "Send." Messages will be displayed in the chat area.
 View Device Count: The number of connected users is displayed at the top of the page.
 
 ### Blocking and Unblocking Devices
