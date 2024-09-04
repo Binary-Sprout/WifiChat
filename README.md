@@ -42,9 +42,10 @@ You will see the chat interface where you can enter your name and message to par
 
 Sending Messages: Enter your name and message in the form and click "Send." Messages will be displayed in the chat area.
 View Device Count: The number of connected users is displayed at the top of the page.
-Blocking Users: Administrators can view the list of connected devices and block or unblock users based on their IP addresses by visiting the /devices URL (e.g., 192.168.4.1/devices , http://anything/devices).
-Blocking and Unblocking Devices:
 
+### Blocking and Unblocking Devices
+
+Blocking Users: Administrators can view the list of connected devices and block or unblock users based on their IP addresses by visiting the /devices URL (e.g., 192.168.4.1/devices , http://anything/devices).
 Blocked devices will see a warning message if they attempt to send messages.
 You can manage blocked IPs through the "Blocked IPs" section on the devices page.
 
