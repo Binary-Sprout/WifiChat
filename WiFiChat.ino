@@ -22,73 +22,149 @@ std::vector<String> blockedIPs;
 
 const char htmlPage[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body { font-family: Arial, sans-serif; margin: 0; padding: 0; text-align: center; }
-  h1 { color: #333; }
-  form { margin: 20px auto; max-width: 500px; }
-  input[type=text], input[type=submit] { width: calc(100% - 22px); padding: 10px; margin: 10px 0; box-sizing: border-box; }
-  input[type=submit] { background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
-  input[type=submit]:hover { background-color: #0056b3; }
-  ul { list-style-type: none; padding: 0; margin: 20px auto; max-width: 500px; }
-  li { background-color: #f9f9f9; margin: 5px 0; padding: 10px; border-radius: 5px; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap; }
-  #deviceCount { margin: 20px auto; max-width: 500px; }
-  .warning { color: red; margin-bottom: 20px; }
-  .link { color: #007BFF; text-decoration: none; }
-  .link:hover { text-decoration: underline; }
+  body {
+    background-color: #2F4F4F;
+    font-family: Arial, sans-serif;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 500px;
+    height: 100vh; /* Make sure the body fills the height of the viewport */
+    display: grid;
+    grid-template-rows: 1fr auto; /* Create two rows: content and form */
+  }
+  
+  h2 {
+    color: #fff;
+    text-align: center;
+  }
+  
+  .warning {
+    color: #555;
+    border-radius: 10px;
+    font-family: Tahoma, Geneva, Arial, sans-serif;
+    font-size: 12px;
+    padding: 10px;
+    margin: 10px;
+    background: #fff8c4;
+    border: 1px solid #f2c779;
+    text-align: center;
+  }
+
+  #chat-container {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #2F4F4F;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  input[type=text], input[type=submit] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border-radius: 10px;
+    border: 0px;
+  }
+
+  input[type=submit] {
+    background: #7079f0;
+    color: white;
+    font-size: 17px;
+    font-weight: 500;
+    border-radius: 0.9em;
+    border: none;
+    cursor: pointer;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    background-color: #e6e6e6;
+  }
+
+  li {
+    background-color: #f9f9f9;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    word-wrap: break-word;
+  }
+
+  #deviceCount {
+    color: #fff;
+    margin: 10px;
+  }
+
+  .link {
+    color: #007BFF;
+    text-decoration: none;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
+
+  /* Make sure form and list don't overflow the screen */
+  form input[type=text] {
+    margin-bottom: 10px;
+  }
 </style>
 <script>
-let lastDeviceCount = 0;
-
 function fetchData() {
   fetch('/messages')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
       const ul = document.getElementById('messageList');
-      if (data && data.messages) {
-        ul.innerHTML = data.messages.reverse().map(msg => `<li>${msg.sender}: ${msg.message}</li>`).join('');
-      } else {
-        console.error('Failed to fetch messages: Data format incorrect', data);
-      }
-    })
-    .catch(error => console.error('Error fetching messages:', error));
+      // Reverse the messages to show the latest at the top
+      ul.innerHTML = data.messages.reverse().map(msg => `<li>${msg.sender}: ${msg.message}</li>`).join('');
+    });
+  updateDeviceCount();
 }
 
 function updateDeviceCount() {
-  fetch('/deviceCount')
-    .then(response => response.json())
-    .then(data => {
-      if (data.count !== lastDeviceCount) {
-        document.getElementById('deviceCount').textContent = 'Users Online: ' + data.count;
-        lastDeviceCount = data.count;
-      }
-    })
-    .catch(error => console.error('Error fetching device count:', error));
+  fetch('/deviceCount').then(response => response.json()).then(data => {
+    document.getElementById('deviceCount').textContent = 'Users Online: ' + data.count;
+  });
 }
 
-function saveName() {
-  const nameInput = document.getElementById('nameInput');
-  localStorage.setItem('userName', nameInput.value);
+function saveName(name) {
+  localStorage.setItem('userName', name);
 }
 
 function loadName() {
-  const savedName = localStorage.getItem('userName');
-  if (savedName) {
-    document.getElementById('nameInput').value = savedName;
+  let savedName = localStorage.getItem('userName');
+  if (!savedName) {
+    savedName = prompt("Please enter your name:");
+    if (savedName) {
+      saveName(savedName);
+    } else {
+      savedName = "Anonymous";  // Default if user cancels
+    }
   }
+  document.getElementById('nameInput').value = savedName;
 }
 
 window.onload = function() {
   loadName();
   fetchData();
-  updateDeviceCount();
   setInterval(fetchData, 5000);
   setInterval(updateDeviceCount, 5000);
 };
@@ -96,15 +172,19 @@ window.onload = function() {
 </head>
 <body>
 <h2>WiFiChat 1.0</h2>
-<div class='warning'>For your safety, do not share your location or any personal information!</div>
+<div class="warning">WARNING! For your safety, do not share your location or any personal information!</div>
+<div id="chat-container">
+  <div id="deviceCount">Users Online: 0</div>
+  <ul id="messageList"></ul>
+</div>
+
 <form action="/update" method="POST">
   <input type="text" id="nameInput" name="sender" placeholder="Enter your name" required oninput="saveName()" />
   <input type="text" name="msg" placeholder="Enter your message" required />
   <input type="submit" value="Send" />
 </form>
-<div id='deviceCount'>Users Online: 0</div>
-<ul id='messageList'></ul>
-<p>github.com/djcasper1975</p>
+
+<p style="text-align: center;">github.com/djcasper1975</p>
 </body>
 </html>
 )rawliteral";
